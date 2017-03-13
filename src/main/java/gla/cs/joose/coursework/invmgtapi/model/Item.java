@@ -97,22 +97,10 @@ public class Item implements Serializable{
 	
 	@Override
 	public boolean equals(Object object){
-		boolean same = false;
-		
-		if(object instanceof Item){
-			if(barcode == ((Item)object).getBarcode()){
-				if(itemName.equals(((Item) object).getItemName())){
-					if(quantity == ((Item)object).getQuantity()){
-						if(supplier.equals(((Item) object).getSupplier())){
-							if(ItemType.getTypeDesc(itemType).equals(ItemType.getTypeDesc(((Item) object).getItemType()))){
-								same = true;
-							}							
-						}
-					}
-				}					
-			}
-		}
-		return same;
+		return (object instanceof Item && barcode == ((Item) object).getBarcode() &&
+                itemName.equals(((Item) object).getItemName()) && quantity == ((Item) object).getQuantity() &&
+                supplier.equals(((Item) object).getSupplier()) &&
+                ItemType.getTypeDesc(itemType).equals(ItemType.getTypeDesc(((Item) object).getItemType())));
 	}
 
 }

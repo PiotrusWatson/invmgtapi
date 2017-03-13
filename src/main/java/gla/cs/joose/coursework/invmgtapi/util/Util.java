@@ -28,93 +28,81 @@ public class Util {
 		File folder = new File(item_store_file_path);
 		File[] itemids = folder.listFiles();
 
-		for (int i = 0; i < itemids.length; i++) {
-			if (itemids[i].isFile()) {
-				String itemId_s = itemids[i].getName();						
-				
-				Item item = getItem(new Long(itemId_s));				
-				
-				if(item != null){
-					if(pattern.trim().length()==0){
-						Item tempitems[] = new Item[items.length+1];
-						for(int j=0;j<items.length;j++){
-							tempitems[j] = items[j];
-						}
+		for (File itemid : itemids) {
+			if (itemid.isFile()) {
+				String itemId_s = itemid.getName();
+
+				Item item = getItem(new Long(itemId_s));
+
+				if (item != null) {
+					if (pattern.trim().length() == 0) {
+						Item tempitems[] = new Item[items.length + 1];
+						System.arraycopy(items, 0, tempitems, 0, items.length);
 						tempitems[items.length] = item;
 						items = tempitems;
 						tempitems = null;
-					}
-					else{
+					} else {
 						boolean matched = false;
-						
-						if(searchby !=null){
+
+						if (searchby != null) {
 							switch (searchby) {
-							case BARCODE:
-								if(Helper.isNumeric(pattern)){
-									if(item.getBarcode() == (new Long(pattern))){
+								case BARCODE:
+									if (Helper.isNumeric(pattern)) {
+										if (item.getBarcode() == (new Long(pattern))) {
+											matched = true;
+										}
+									}
+									break;
+								case ITEM_TYPE:
+									if (item.getItemType() != null) {
+										if (item.getItemType() == ItemType.getItemType(pattern)) {
+											matched = true;
+										}
+									}
+									break;
+								case DESCRIPTION:
+									if (item.getDescription().toLowerCase().contains(pattern.toLowerCase())) {
 										matched = true;
 									}
-								}
-								break;
-							case ITEMTYPE:
-								if(item.getItemType() != null){
-									if(item.getItemType() == ItemType.getItemType(pattern)){
+									break;
+								case QUANTITY:
+									if (Helper.isNumeric(pattern)) {
+										if (item.getQuantity() == new Integer(pattern)) {
+											matched = true;
+										}
+									}
+									break;
+								case SUPPLIER:
+									if (item.getSupplier().equalsIgnoreCase(pattern)) {
 										matched = true;
 									}
-								}						
-								break;
-							case DESCRIPTION:
-								if(item.getDescription().toLowerCase().contains(pattern.toLowerCase())){
-									matched = true;
-								}
-								break;
-							case QUANTITY:
-								if(Helper.isNumeric(pattern)){
-									if(item.getQuantity() == new Integer(pattern)){
+									break;
+								case ITEM_NAME:
+									if (item.getItemName().toLowerCase().contains(pattern.toLowerCase())) {
 										matched = true;
 									}
-								}						
-								break;
-							case SUPPLIER:
-								if(item.getSupplier().equalsIgnoreCase(pattern)){
-									matched = true;
-								}
-								break;
-							case ITEMNAME:
-								if(item.getItemName().toLowerCase().contains(pattern.toLowerCase())){
-									matched = true;
-								}
-								break;
+									break;
+							}
+						} else {
+							if (item.getDescription().toLowerCase().contains(pattern.toLowerCase()) || item.getSupplier().toLowerCase().equalsIgnoreCase(pattern.toLowerCase()) || item.getItemName().toLowerCase().contains(pattern.toLowerCase())) {
+								matched = true;
 							}
 						}
-						else{
-							if(item.getDescription().toLowerCase().contains(pattern.toLowerCase())){
-								matched = true;
-							}
-							else if(item.getSupplier().toLowerCase().equalsIgnoreCase(pattern.toLowerCase())){
-								matched = true;
-							}
-							else if(item.getItemName().toLowerCase().contains(pattern.toLowerCase())){
-								matched = true;
-							}
-						}				
 
-						if(matched){
-							Item tempitems[] = new Item[items.length+1];
-							for(int j=0;j<items.length;j++){
-								tempitems[j] = items[j];
-							}
+						if (matched) {
+							Item tempitems[] = new Item[items.length + 1];
+							System.arraycopy(items, 0, tempitems, 0, items.length);
 							tempitems[items.length] = item;
 							items = tempitems;
 							tempitems = null;
 						}
 					}
-					
+
 				}
-				
+
 			}
-			
-			if(items.length == limit){
+
+			if (items.length == limit) {
 				break;
 			}
 		}
