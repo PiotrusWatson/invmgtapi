@@ -144,21 +144,12 @@ public class InvAPI {
 	@Path("/items") 
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addItem(long barcode,
-							String itemName, 
-					        String itemType_s, 
-					        int qty,
-					        String supplier,
-					        String desc,
-					        @Context UriInfo uriinfo){			
+	public Response addItem(Item item, @Context UriInfo uriinfo){		
 		URI uri = uriinfo.getAbsolutePathBuilder().build();	//todo: update this
-		
-		//~~actual logic dont touch unless josh ~~
-		ItemType itemType = ItemType.getItemType(itemType_s);
-		Item item = new Item(barcode, itemName, itemType, qty, supplier, desc);
-		
+		//todo: add link between item uri
+		//~~actual logic dont touch unless josh ~~ NVM LOL
 		boolean done = ItemFactory.addItem(item);
-		//~~actual logic dont touch unless josh ~~
+		//~~actual logic dont touch unless josh ~~ 
 		
 		
 		if (done) return Response.created(uri).build(); //need to update this with accurate info
