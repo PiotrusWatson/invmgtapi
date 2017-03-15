@@ -8,6 +8,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -28,16 +29,20 @@ public class InvAPI {
 	 * @return Return a Response object containing the status code after delete operation
 	 */
 	
-	@DELETE
-	@Path("/items/{itemid}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteItem(long itemid,@Context UriInfo uriinfo) {		
-		
+	@DELETE //TYPE OF HTML REQUEST
+	@Path("/items/{itemid}") //WHERE TO LOOK FOR IT {itemid} is like a variable lol
+	@Produces(MediaType.APPLICATION_JSON) //WHAT TYPE OF THING IT SENDS BACK AS A RESPONSE
+	public Response deleteItem(@PathParam("itemid") long itemid,@Context UriInfo uriinfo) {		
+		//~~actual logic dont touch unless josh ~~
 		boolean deleted = ItemFactory.delete(itemid);
+		//~~actual logic dont touch unless josh ~~
+		
+		//takes the uri passed to it and returns the full path
 		URI uri = uriinfo.getAbsolutePathBuilder().build();
 		
-		if (deleted) return Response.ok(uri).build();
-		else return Response.status(404).build();
+		
+		if (deleted) return Response.ok(uri).status(200).build();//if successful, returns that it did what it was asked
+		else return Response.status(404).build(); //else it returns that it couldn't find the item
 		
 		// Task 5
 		
@@ -54,17 +59,24 @@ public class InvAPI {
 	 * @return return a Response object containing a list of items that matches a search pattern and the status code	 * 		  
 	 */
 	
-	@GET
-	@Path("/items/{desc}/{pattern}/{limit}")
+	@GET //as it's a get im not sure i want to actually make it consume anything
+	@Path("/items/{desc}/{pattern}/{limit}") //im not sure if this is right but we can feed parameters using uris?
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getItem(String searchbydesc, String pattern,int limit, @Context UriInfo uriinfo) {        
-       
-		Item[] results = ItemFactory.search(searchbydesc, pattern, limit);
-        URI uri = uriinfo.getAbsolutePathBuilder().build();
-		if (results.length !=0)
-			return Response.ok(uri).entity(results).status(200).build();
-		else return Response.status(404).build();
+	public Response getItem(@PathParam("desc") String searchbydesc, @PathParam("pattern") String pattern,
+			@PathParam("limit") int limit, @Context UriInfo uriinfo) {        
 		
+		
+		//~~actual logic dont touch unless josh ~~
+		Item[] results = ItemFactory.search(searchbydesc, pattern, limit);
+		//~~actual logic dont touch unless josh ~~
+		
+        URI uri = uriinfo.getAbsolutePathBuilder().build(); 
+        
+		if (results.length !=0) //if more than one result it prob found something
+			return Response.ok(uri).entity(results).status(200).build(); //so returns that it found stuff
+		else return Response.status(404).build(); //otherwise it didn't :((
+		
+		//Task 6
 	}
 	
 	/**
@@ -83,7 +95,7 @@ public class InvAPI {
 	@Path("/items/{itemid}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateItem(long updateitemid,
+	public Response updateItem(@PathParam("itemid") long updateitemid,
 							   long newBarcode,
 							   String newItemName, 
 							   String newItemType_s, 
@@ -92,7 +104,9 @@ public class InvAPI {
 							   String newDesc,
 							   @Context UriInfo uriinfo){	
 		
-		URI uri = uriinfo.getAbsolutePathBuilder().build();		        
+		URI uri = uriinfo.getAbsolutePathBuilder().build();		
+		
+		//~~actual logic dont touch unless josh ~~
 		boolean updated = false;
 		
 		boolean deleted = ItemFactory.delete(updateitemid);
@@ -107,12 +121,12 @@ public class InvAPI {
 				updated = true;
 			}
 		}	
+		//~~actual logic dont touch unless josh ~~
 		
 		
-		//Task 7
-		if (updated) return Response.ok(uri).entity(uitem).status(200).build();
-		else return Response.status(404).build();
-					
+		if (updated) return Response.ok(uri).entity(uitem).status(200).build(); //i did thing!
+		else return Response.status(404).build(); //i didn't :(
+		//Task 7		
 	}
 	
 	/**
@@ -128,7 +142,8 @@ public class InvAPI {
 	 */
 	@POST
 	@Path("/items") 
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response addItem(long barcode,
 							String itemName, 
 					        String itemType_s, 
@@ -136,15 +151,20 @@ public class InvAPI {
 					        String supplier,
 					        String desc,
 					        @Context UriInfo uriinfo){			
-		        
+		URI uri = uriinfo.getAbsolutePathBuilder().build();	//todo: update this
+		
+		//~~actual logic dont touch unless josh ~~
 		ItemType itemType = ItemType.getItemType(itemType_s);
 		Item item = new Item(barcode, itemName, itemType, qty, supplier, desc);
-				
+		
 		boolean done = ItemFactory.addItem(item);
+		//~~actual logic dont touch unless josh ~~
 		
-		// Task 8	
 		
-		return null;
+		if (done) return Response.created(uri).build(); //need to update this with accurate info
+		else return Response.status(404).build(); 
+		
+		// Task 8-- DEFINITELY STILL NEEDS WORK
 	}
 	
 }
