@@ -1,8 +1,14 @@
 package gla.cs.joose.workshop.invmgtapi;
 
+import java.net.URI;
+
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -12,6 +18,7 @@ import gla.cs.joose.coursework.invmgtapi.model.Item;
 import gla.cs.joose.coursework.invmgtapi.model.ItemFactory;
 import gla.cs.joose.coursework.invmgtapi.model.ItemType;
 
+@Path("/invapi")
 public class InvAPI {
 	
 	/**
@@ -20,12 +27,21 @@ public class InvAPI {
 	 * @param uriinfo
 	 * @return Return a Response object containing the status code after delete operation
 	 */
+	
+	@DELETE
+	@Path("/items/{itemid}")
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteItem(long itemid,@Context UriInfo uriinfo) {		
+		
 		boolean deleted = ItemFactory.delete(itemid);
+		URI uri = uriinfo.getAbsolutePathBuilder().build();
+		
+		if (deleted) return Response.ok(uri).build();
+		else return Response.status(404).build();
 		
 		// Task 5
 		
-		return null;
+		
 	}
 	
 	/**
@@ -37,13 +53,17 @@ public class InvAPI {
 	 * @param uriinfo
 	 * @return return a Response object containing a list of items that matches a search pattern and the status code	 * 		  
 	 */
+	
+	@GET
+	@Path("/items/{desc}/{pattern}/{limit}")
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getItem(String searchbydesc, String pattern,int limit, @Context UriInfo uriinfo) {        
        
 		Item[] results = ItemFactory.search(searchbydesc, pattern, limit);
-        
-        //Task 6
-		
-		return null;
+        URI uri = uriinfo.getAbsolutePathBuilder().build();
+		if (results.length !=0)
+			return Response.ok(uri).entity(results).status(200).build();
+		else return Response.status(404).build();
 		
 	}
 	
@@ -59,6 +79,10 @@ public class InvAPI {
 	 * @param uriinfo
 	 * @return return a Response object containing  the updated item and the status code
 	 */
+	@PUT
+	@Path("/items/{itemid}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateItem(long updateitemid,
 							   long newBarcode,
 							   String newItemName, 
@@ -67,7 +91,8 @@ public class InvAPI {
 							   String newSupplier,
 							   String newDesc,
 							   @Context UriInfo uriinfo){	
-				        
+		
+		URI uri = uriinfo.getAbsolutePathBuilder().build();		        
 		boolean updated = false;
 		
 		boolean deleted = ItemFactory.delete(updateitemid);
@@ -85,7 +110,8 @@ public class InvAPI {
 		
 		
 		//Task 7
-		return null;
+		if (updated) return Response.ok(uri).entity(uitem).status(200).build();
+		else return Response.status(404).build();
 					
 	}
 	
