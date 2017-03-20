@@ -53,7 +53,7 @@ public class Util {
 										}
 									}
 									break;
-								case ITEM_TYPE:
+								case ITEMTYPE:
 									if (item.getItemType() != null) {
 										if (item.getItemType() == ItemType.getItemType(pattern)) {
 											matched = true;
@@ -77,7 +77,7 @@ public class Util {
 										matched = true;
 									}
 									break;
-								case ITEM_NAME:
+								case ITEMNAME:
 									if (item.getItemName().toLowerCase().contains(pattern.toLowerCase())) {
 										matched = true;
 									}

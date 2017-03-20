@@ -1,48 +1,72 @@
 package gla.cs.joose.coursework.invmgtapi.util;
 
 /**
+ *
  * @author inah Omoronyia
  */
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
-public enum SearchBy implements Serializable {
-    ITEM_TYPE, DESCRIPTION, BARCODE, QUANTITY, SUPPLIER, ITEM_NAME;
+public enum SearchBy  implements Serializable{
+	ITEMTYPE, DESCRIPTION, BARCODE, QUANTITY, SUPPLIER, ITEMNAME;
+	
+	public static String getSearchByDesc(SearchBy type){
+		String  searchbydesc = null;
 
-    public static String getSearchByDesc(SearchBy type) {
-        return (type.name().contains("_") ?
-                Arrays.stream(type.name().split("_")).map(x -> x.substring(0, 1).toUpperCase() + x.substring(1)).collect(Collectors.joining(" ")) :
-                type.name().substring(0, 1).toUpperCase() + type.name().substring(1));
-//        String searchbydesc = null;
-//
-//        switch (type) {
-//            case ITEM_TYPE:
-//                searchbydesc = "Item Type";
-//                break;
-//            case DESCRIPTION:
-//                searchbydesc = "Description";
-//                break;
-//            case BARCODE:
-//                searchbydesc = "Barcode";
-//                break;
-//            case QUANTITY:
-//                searchbydesc = "Quantity";
-//                break;
-//            case SUPPLIER:
-//                searchbydesc = "Supplier";
-//                break;
-//            case ITEM_NAME:
-//                searchbydesc = "Item Name";
-//                break;
-//        }
-//        return searchbydesc;
-    }
+		switch (type) {
+		case ITEMTYPE:
+			searchbydesc = "Item Type";
+			break;
+		case DESCRIPTION:
+			searchbydesc = "Description";
+			break;
+		case BARCODE:
+			searchbydesc = "Barcode";
+			break;
+		case QUANTITY:
+			searchbydesc = "Quantity";
+			break;
+		case SUPPLIER:
+			searchbydesc = "Supplier";
+			break;
+		case ITEMNAME:
+			searchbydesc = "Item Name";
+			break;
+		}
+		
+			
+		
 
-    public static SearchBy getSearchBy(String searchByDesc) {
-        return searchByDesc != null ?
-                Arrays.stream(SearchBy.values()).filter(e -> searchByDesc.contains(getSearchByDesc(e))).findFirst().orElse(SearchBy.DESCRIPTION) :
-                SearchBy.DESCRIPTION;
-    }
+		return searchbydesc;
+	}
+	
+	public static SearchBy getSearchBy(String searchbydesc){
+		if(searchbydesc != null){
+			if(searchbydesc.contains(getSearchByDesc(SearchBy.ITEMTYPE))){
+				return SearchBy.ITEMTYPE;
+			}
+			else if(searchbydesc.contains(getSearchByDesc(SearchBy.DESCRIPTION))){
+				return SearchBy.DESCRIPTION;
+			}
+			else if(searchbydesc.contains(getSearchByDesc(SearchBy.BARCODE))){
+				return SearchBy.BARCODE;
+			}
+			else if(searchbydesc.contains(getSearchByDesc(SearchBy.QUANTITY))){
+				return SearchBy.QUANTITY;
+			}
+			else if(searchbydesc.contains(getSearchByDesc(SearchBy.SUPPLIER))){
+				return SearchBy.SUPPLIER;
+			}
+			else if(searchbydesc.contains(getSearchByDesc(SearchBy.ITEMNAME))){
+				return SearchBy.ITEMNAME;
+			}
+			else{
+				return SearchBy.DESCRIPTION;//default
+			}
+		}
+		else{
+			return SearchBy.DESCRIPTION;//default
+		}
+		
+	}
 }
